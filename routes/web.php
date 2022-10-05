@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LiveWireTestController;
+use App\Http\Controllers\AlpineTestController;
+use Termwind\Components\Raw;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,8 +30,26 @@ Route::middleware([
     })->name('dashboard');
 });
 
+Route::prefix("manager")
+->middleware("can:manager-higher")
+->group(function(){
+    Route::get('index', function () {
+        dd("manager");
+    });
+});
+
+Route::middleware("can:user-higher")
+->group(function(){
+    Route::get('index', function () {
+        dd("user");
+    });
+});
+
+
 Route::controller(LiveWireTestController::class)
 ->prefix("livewire-test")->group(function(){
     Route::get("index", "index")->name("livewire-test.index");
     Route::get("register", "register")->name("livewire-test.register");
 });
+
+Route::get("alpine-test/index", [AlpineTestController::class, "index"]);
